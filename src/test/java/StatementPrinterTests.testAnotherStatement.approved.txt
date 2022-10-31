@@ -1,0 +1,5 @@
+Statement for BigCo
+  Hamlet: $400.00 (30 seats)
+  As You Like It: $360.00 (20 seats)
+Amount owed is $760.00
+You earned 4 credits

@@ -28,6 +28,22 @@ public class StatementPrinterTests {
     }
 
     @Test
+    void testAnotherStatement() {
+        Map<String, Play> plays = Map.of(
+                "hamlet",  new Play("Hamlet", "tragedy"),
+                "as-like", new Play("As You Like It", "comedy"));
+
+        Invoice invoice = new Invoice("BigCo", List.of(
+                new Performance("hamlet", 30),
+                new Performance("as-like", 20)));
+
+        StatementPrinter statementPrinter = new StatementPrinter();
+        var result = statementPrinter.print(invoice, plays);
+//        System.out.println(result);
+        verify(result);
+    }
+
+    @Test
     void statementWithNewPlayTypes() {
         Map<String, Play> plays = Map.of(
                 "henry-v",  new Play("Henry V", "history"),
