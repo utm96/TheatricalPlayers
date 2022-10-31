@@ -1,3 +1,8 @@
+import amountcaculator.AmountCaculatorFactory;
+import amountcaculator.AmountCalculator;
+import result.Line;
+import result.StatementResult;
+
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -6,25 +11,19 @@ public class StatementPrinter {
     public final String COMEDY = "comedy";
 
     public String print(Invoice invoice, Map<String, Play> plays) {
+        StatementResult statementResult = new StatementResult();
         int totalAmount = 0;
 //        int volumeCredits = 0;
-        StringBuilder result = Optional.ofNullable(String.format("Statement for %s\n", invoice.customer)).map(StringBuilder::new).orElse(null);
-        NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
+//        StringBuilder result = Optional.ofNullable(String.format("Statement for %s\n", invoice.customer)).map(StringBuilder::new).orElse(null);
+        statementResult.setCustomer(invoice.customer);
+//        NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
         for (Performance perf : invoice.performances) {
             Play play = plays.get(perf.playID);
             //calculate amount
-            int thisAmount;
-            switch (play.type) {
-                case TRAGEDY -> {
-                    thisAmount = calculateAmountTradegy(perf);
-                }
-                case COMEDY -> {
-                    thisAmount = calculateAmountComedy(perf);
-                }
-                default -> {
-                    throw new Error("unknown type: ${play.type}");
-                }
-            }
+
+            AmountCalculator amountCalculator = AmountCaculatorFactory.amountCalculatorFor(play.type);
+            int thisAmount = amountCalculator.calculateAmount(perf.audience);
+
 
 //            // add volume credits
 //            volumeCredits += Math.max(perf.audience - 30, 0);
@@ -32,21 +31,15 @@ public class StatementPrinter {
 //            if (COMEDY.equals(play.type)) volumeCredits += Math.floor(perf.audience / 5);
 
             // print line for this order
-            result = (result == null ? new StringBuilder("null") : result).append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
+//            result = (result == null ? new StringBuilder("null") : result).append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
+            statementResult.getLines().add(new Line(play.name, thisAmount, perf.audience));
             totalAmount += thisAmount;
         }
-        result = (result == null ? new StringBuilder("null") : result).append(String.format("Amount owed is %s\n", frmt.format(totalAmount / 100)));
-        result.append(String.format("You earned %s credits\n", calculateVolumeCredit(invoice,plays)));
-        return result.toString();
-    }
-
-
-    public int calculateAmountTradegy(Performance perf) {
-        int amount = 40000;
-        if (perf.audience > 30) {
-            amount += 1000 * (perf.audience - 30);
-        }
-        return amount;
+        statementResult.setTotalAmount(totalAmount);
+        statementResult.setVolumeCredit(calculateVolumeCredit(invoice, plays));
+//        result = (result == null ? new StringBuilder("null") : result).append(String.format("Amount owed is %s\n", frmt.format(totalAmount / 100)));
+//        result.append(String.format("You earned %s credits\n", calculateVolumeCredit(invoice, plays)));
+        return printText(statementResult);
     }
 
     public int calculateVolumeCredit(Invoice invoice, Map<String, Play> plays) {
@@ -60,12 +53,15 @@ public class StatementPrinter {
         return credit;
     }
 
-    public int calculateAmountComedy(Performance perf) {
-        int amount = 30000;
-        if (perf.audience > 20) {
-            amount += 10000 + 500 * (perf.audience - 20);
+    public String printText(StatementResult statementResult) {
+        NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
+        StringBuilder result = Optional.ofNullable(String.format("Statement for %s\n", statementResult.getCustomer())).map(StringBuilder::new).orElse(null);
+        List<Line> lines = statementResult.getLines();
+        for (Line line : lines) {
+            result = (result == null ? new StringBuilder("null") : result).append(String.format("  %s: %s (%s seats)\n", line.getName(), frmt.format(line.getAmount() / 100), line.getAudience()));
         }
-        amount += 300 * perf.audience;
-        return amount;
+        result = (result == null ? new StringBuilder("null") : result).append(String.format("Amount owed is %s\n", frmt.format(statementResult.getTotalAmount() / 100)));
+        result.append(String.format("You earned %s credits\n", statementResult.getVolumeCredit()));
+        return result.toString();
     }
 }
