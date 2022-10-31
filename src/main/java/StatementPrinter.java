@@ -1,5 +1,5 @@
-import amountcaculator.AmountCaculatorFactory;
-import amountcaculator.AmountCalculator;
+import calculator.CalculatorFactory;
+import calculator.Calculator;
 import result.Line;
 import result.StatementResult;
 
@@ -7,9 +7,6 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class StatementPrinter {
-    public final String TRAGEDY = "tragedy";
-    public final String COMEDY = "comedy";
-
     public String print(Invoice invoice, Map<String, Play> plays) {
         StatementResult statementResult = new StatementResult();
         int totalAmount = 0;
@@ -17,22 +14,15 @@ public class StatementPrinter {
         statementResult.setCustomer(invoice.customer);
         for (Performance perf : invoice.performances) {
             Play play = plays.get(perf.playID);
-            AmountCalculator amountCalculator = AmountCaculatorFactory.amountCalculatorFor(play.type);
-            int thisAmount = amountCalculator.calculateAmount(perf.audience);
+            Calculator calculator = CalculatorFactory.amountCalculatorFor(play.type);
+            volumeCredit += calculator.creditFromPerformance(perf.audience);
+            int thisAmount = calculator.calculateAmount(perf.audience);
             statementResult.getLines().add(new Line(play.name, thisAmount, perf.audience));
             totalAmount += thisAmount;
-            volumeCredit += creditFromPerformance(perf, play);
         }
         statementResult.setTotalAmount(totalAmount);
         statementResult.setVolumeCredit(volumeCredit);
         return printText(statementResult);
-    }
-
-    public int creditFromPerformance(Performance performance, Play play) {
-        int credit = 0;
-        credit += Math.max(performance.audience - 30, 0);
-        if (COMEDY.equals(play.type)) credit += Math.floor(performance.audience / 5);
-        return credit;
     }
 
     public String printText(StatementResult statementResult) {

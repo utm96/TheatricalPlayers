@@ -1,6 +1,6 @@
-package amountcaculator;
+package calculator;
 
-public class TragedyAmountCalculator implements AmountCalculator {
+public class TragedyCalculator implements Calculator {
     public final Integer BASE_AMOUNT = 40000;
 
     @Override
@@ -10,5 +10,11 @@ public class TragedyAmountCalculator implements AmountCalculator {
             amount += 1000 * (audience - 30);
         }
         return amount;
+    }
+    @Override
+    public Integer creditFromPerformance(Integer audience) {
+        int credit = 0;
+        credit += Math.max(audience - 30, 0);
+        return credit;
     }
 }

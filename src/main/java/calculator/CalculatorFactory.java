@@ -1,16 +1,16 @@
-package amountcaculator;
+package calculator;
 
-public class AmountCaculatorFactory {
+public class CalculatorFactory {
     public static final String TRAGEDY = "tragedy";
     public static final String COMEDY = "comedy";
 
-    public static AmountCalculator amountCalculatorFor(String playType) {
+    public static Calculator amountCalculatorFor(String playType) {
         switch (playType) {
             case TRAGEDY -> {
-                return new TragedyAmountCalculator();
+                return new TragedyCalculator();
             }
             case COMEDY -> {
-                return new ComedyAmountCalculator();
+                return new ComedyCalculator();
             }
             default -> {
                 throw new Error("unknown type: " + playType);

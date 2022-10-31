@@ -1,6 +1,6 @@
-package amountcaculator;
+package calculator;
 
-public class ComedyAmountCalculator implements AmountCalculator{
+public class ComedyCalculator implements Calculator {
     public final Integer BASE_AMOUNT = 30000;
 
     @Override
@@ -11,5 +11,13 @@ public class ComedyAmountCalculator implements AmountCalculator{
         }
         amount += 300 * audience;
         return amount;
+    }
+
+    @Override
+    public Integer creditFromPerformance(Integer audience) {
+        int credit = 0;
+        credit += Math.max(audience - 30, 0);
+        credit += Math.floor(audience / 5);
+        return credit;
     }
 }
