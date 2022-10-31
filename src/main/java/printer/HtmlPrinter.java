@@ -17,7 +17,7 @@ public class HtmlPrinter implements Printer {
             result.append(printLine(line, numberFormat));
         }
         result.append(printTotalAmount(statementResult, numberFormat));
-        result.append(printVolumeCredit(statementResult, numberFormat));
+        result.append(printVolumeCredit(statementResult));
         result.append(endOfFile());
         return result.toString();
     }
@@ -61,7 +61,7 @@ public class HtmlPrinter implements Printer {
                 "    </tr>\n", frmt.format(statementResult.getTotalAmount() / 100));
     }
 
-    private String printVolumeCredit(StatementResult statementResult, NumberFormat frmt) {
+    private String printVolumeCredit(StatementResult statementResult) {
         return String.format("    <tr>\n" +
                 "        <td colspan=\"2\" style=\"text-align: right;\"><strong>Fidelity Points Earned:</strong></td>\n" +
                 "        <td>%s</td>\n" +

@@ -1,14 +1,12 @@
-import calculator.CalculatorFactory;
 import calculator.Calculator;
+import calculator.CalculatorFactory;
 import printer.FormatOutput;
 import printer.Printer;
 import printer.PrinterFactory;
-import printer.TextPrinter;
 import result.Line;
 import result.StatementResult;
 
-import java.text.NumberFormat;
-import java.util.*;
+import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays, FormatOutput formatOutput) {

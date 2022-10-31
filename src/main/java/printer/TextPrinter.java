@@ -6,7 +6,6 @@ import result.StatementResult;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 public class TextPrinter implements Printer {
     @Override
@@ -18,7 +17,7 @@ public class TextPrinter implements Printer {
             result.append(printLine(line, numberFormat));
         }
         result.append(printTotalAmount(statementResult, numberFormat));
-        result.append(printVolumeCredit(statementResult, numberFormat));
+        result.append(printVolumeCredit(statementResult));
         return result.toString();
     }
 
@@ -34,7 +33,7 @@ public class TextPrinter implements Printer {
         return String.format("Amount owed is %s\n", frmt.format(statementResult.getTotalAmount() / 100));
     }
 
-    private String printVolumeCredit(StatementResult statementResult, NumberFormat frmt) {
+    private String printVolumeCredit(StatementResult statementResult) {
         return String.format("You earned %s credits\n", statementResult.getVolumeCredit());
     }
 }
