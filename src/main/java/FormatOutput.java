@@ -1,2 +1,3 @@
-package PACKAGE_NAME;public enum FormatOutput {
+public enum FormatOutput {
+    HTML, TEXT
 }
