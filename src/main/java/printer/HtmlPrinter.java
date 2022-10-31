@@ -23,55 +23,64 @@ public class HtmlPrinter implements Printer {
     }
 
     private String printCustomer(StatementResult statementResult) {
-        return String.format("<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "    <style>\n" +
-                "table, th, td {\n" +
-                "border: 1px solid black;\n" +
-                "}\n" +
-                "th, td {\n" +
-                "padding: 5px;\n" +
-                "}\n" +
-                "</style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<h1>Invoice</h1>\n" +
-                "<p><strong>Client:</strong> %s</p>\n" +
-                "<table>\n" +
-                "    <tr>\n" +
-                "        <th>Piece</th>\n" +
-                "        <th>Seats Sold</th>\n" +
-                "        <th>Price</th>\n" +
-                "    </tr>\n", statementResult.getCustomer());
+        return String.format("""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                table, th, td {
+                border: 1px solid black;
+                }
+                th, td {
+                padding: 5px;
+                }
+                </style>
+                </head>
+                <body>
+                <h1>Invoice</h1>
+                <p><strong>Client:</strong> %s</p>
+                <table>
+                    <tr>
+                        <th>Piece</th>
+                        <th>Seats Sold</th>
+                        <th>Price</th>
+                    </tr>
+                """, statementResult.getCustomer());
     }
 
     private String printLine(Line line, NumberFormat frmt) {
-        return String.format("    <tr>\n" +
-                "        <td>%s</td>\n" +
-                "        <td>%s</td>\n" +
-                "        <td>%s</td>\n" +
-                "    </tr>\n", line.getName(), line.getAudience(), frmt.format(line.getAmount() / 100));
+        return String.format("""
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                    </tr>
+                """, line.getName(), line.getAudience(), frmt.format(line.getAmount() / 100));
     }
 
     private String printTotalAmount(StatementResult statementResult, NumberFormat frmt) {
-        return String.format("    <tr>\n" +
-                "        <td colspan=\"2\" style=\"text-align: right;\"><strong>Total Owed:</strong></td>\n" +
-                "        <td>%s</td>\n" +
-                "    </tr>\n", frmt.format(statementResult.getTotalAmount() / 100));
+        return String.format("""
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>Total Owed:</strong></td>
+                        <td>%s</td>
+                    </tr>
+                """, frmt.format(statementResult.getTotalAmount() / 100));
     }
 
     private String printVolumeCredit(StatementResult statementResult) {
-        return String.format("    <tr>\n" +
-                "        <td colspan=\"2\" style=\"text-align: right;\"><strong>Fidelity Points Earned:</strong></td>\n" +
-                "        <td>%s</td>\n" +
-                "    </tr>\n", statementResult.getVolumeCredit());
+        return String.format("""
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>Fidelity Points Earned:</strong></td>
+                        <td>%s</td>
+                    </tr>
+                """, statementResult.getVolumeCredit());
     }
     private String endOfFile() {
-        return "</table>\n" +
-                "\n" +
-                "<p><strong>Payment is required under 30 day. We can break your knees if you don't do so</strong></p>\n" +
-                "</body>\n" +
-                "</html>";
+        return """
+                </table>
+
+                <p><strong>Payment is required under 30 day. We can break your knees if you don't do so</strong></p>
+                </body>
+                </html>""";
     }
 }
