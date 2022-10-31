@@ -7,10 +7,9 @@ public class StatementPrinter {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
         int totalAmount = 0;
-        int volumeCredits = 0;
+//        int volumeCredits = 0;
         StringBuilder result = Optional.ofNullable(String.format("Statement for %s\n", invoice.customer)).map(StringBuilder::new).orElse(null);
         NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-
         for (Performance perf : invoice.performances) {
             Play play = plays.get(perf.playID);
             //calculate amount
@@ -27,17 +26,17 @@ public class StatementPrinter {
                 }
             }
 
-            // add volume credits
-            volumeCredits += Math.max(perf.audience - 30, 0);
-            // add extra credit for every ten comedy attendees
-            if (COMEDY.equals(play.type)) volumeCredits += Math.floor(perf.audience / 5);
+//            // add volume credits
+//            volumeCredits += Math.max(perf.audience - 30, 0);
+//            // add extra credit for every ten comedy attendees
+//            if (COMEDY.equals(play.type)) volumeCredits += Math.floor(perf.audience / 5);
 
             // print line for this order
             result = (result == null ? new StringBuilder("null") : result).append(String.format("  %s: %s (%s seats)\n", play.name, frmt.format(thisAmount / 100), perf.audience));
             totalAmount += thisAmount;
         }
         result = (result == null ? new StringBuilder("null") : result).append(String.format("Amount owed is %s\n", frmt.format(totalAmount / 100)));
-        result.append(String.format("You earned %s credits\n", volumeCredits));
+        result.append(String.format("You earned %s credits\n", calculateVolumeCredit(invoice,plays)));
         return result.toString();
     }
 
@@ -49,6 +48,18 @@ public class StatementPrinter {
         }
         return amount;
     }
+
+    public int calculateVolumeCredit(Invoice invoice, Map<String, Play> plays) {
+        int credit = 0;
+        for (Performance perf : invoice.performances) {
+            Play play = plays.get(perf.playID);
+            credit += Math.max(perf.audience - 30, 0);
+            // add extra credit for every ten comedy attendees
+            if (COMEDY.equals(play.type)) credit += Math.floor(perf.audience / 5);
+        }
+        return credit;
+    }
+
     public int calculateAmountComedy(Performance perf) {
         int amount = 30000;
         if (perf.audience > 20) {
