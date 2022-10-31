@@ -1,5 +1,8 @@
 import calculator.CalculatorFactory;
 import calculator.Calculator;
+import printer.FormatOutput;
+import printer.Printer;
+import printer.PrinterFactory;
 import printer.TextPrinter;
 import result.Line;
 import result.StatementResult;
@@ -8,7 +11,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class StatementPrinter {
-    public String print(Invoice invoice, Map<String, Play> plays) {
+    public String print(Invoice invoice, Map<String, Play> plays, FormatOutput formatOutput) {
         StatementResult statementResult = new StatementResult();
         int totalAmount = 0;
         int volumeCredit = 0;
@@ -23,7 +26,8 @@ public class StatementPrinter {
         }
         statementResult.setTotalAmount(totalAmount);
         statementResult.setVolumeCredit(volumeCredit);
-        return new TextPrinter().print(statementResult);
+        Printer printer = PrinterFactory.printerFor(formatOutput);
+        return printer.print(statementResult);
     }
 
 

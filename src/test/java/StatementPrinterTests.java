@@ -1,11 +1,13 @@
 import org.approvaltests.core.Options;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import printer.FormatOutput;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.approvaltests.Approvals.verify;
+import static org.approvaltests.Approvals.verifyHtml;
 
 public class StatementPrinterTests {
 
@@ -22,25 +24,28 @@ public class StatementPrinterTests {
                 new Performance("othello", 40)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays);
+        var result = statementPrinter.print(invoice, plays, FormatOutput.TEXT);
 
         verify(result);
     }
 
+
     @Test
-    void testAnotherStatement() {
+    void exampleStatementHtml() {
         Map<String, Play> plays = Map.of(
                 "hamlet",  new Play("Hamlet", "tragedy"),
-                "as-like", new Play("As You Like It", "comedy"));
+                "as-like", new Play("As You Like It", "comedy"),
+                "othello", new Play("Othello", "tragedy"));
 
         Invoice invoice = new Invoice("BigCo", List.of(
-                new Performance("hamlet", 30),
-                new Performance("as-like", 20)));
+                new Performance("hamlet", 55),
+                new Performance("as-like", 35),
+                new Performance("othello", 40)));
 
         StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays);
+        var result = statementPrinter.print(invoice, plays,FormatOutput.HTML);
 //        System.out.println(result);
-        verify(result);
+        verifyHtml(result);
     }
 
     @Test
@@ -55,7 +60,7 @@ public class StatementPrinterTests {
 
         StatementPrinter statementPrinter = new StatementPrinter();
         Assertions.assertThrows(Error.class, () -> {
-            statementPrinter.print(invoice, plays);
+            statementPrinter.print(invoice, plays,FormatOutput.TEXT);
         });
     }
 }
